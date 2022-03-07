@@ -24,6 +24,7 @@ class CollectionResponseIterator implements \Iterator
 
     /* Iterator implementation */
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->response->get($this->position);
@@ -34,12 +35,12 @@ class CollectionResponseIterator implements \Iterator
         return $this->position;
     }
 
-    public function next()
+    public function next(): void
     {
         $this->position++;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }

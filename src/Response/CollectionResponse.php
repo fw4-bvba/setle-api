@@ -61,6 +61,8 @@ class CollectionResponse implements \Countable, \IteratorAggregate, \ArrayAccess
         return $offset >= 0 && $offset < $this->count();
     }
 
+    /* JsonSerializable implementation */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if (!$this->offsetExists($offset)) {
