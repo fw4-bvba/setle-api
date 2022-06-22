@@ -5,12 +5,12 @@
     "keywords": ["setle", "api", "sdk", "homeweb"],
     "license": "MIT",
     "require": {
-        "php": "^7.4|^8.0|^8.1",
+        "php": "^7.1|^8.0|^8.1",
         "guzzlehttp/guzzle": "~6.0|~7.0",
-        "ocramius/package-versions": "^2.1"
+        "ocramius/package-versions": "^1.4|^2.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^7.5|^8.4|^9.0"
     },
     "autoload": {
         "psr-4": { "Setle\\": "src/" }
