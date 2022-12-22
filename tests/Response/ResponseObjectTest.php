@@ -106,6 +106,7 @@ class ResponseObjectTest extends TestCase
             ],
             'array' => [1, 2, 3],
             'date' => '2020-01-01T12:00:00Z',
+            'null' => null,
         ];
         $object = new ResponseObject($input);
 
@@ -114,6 +115,7 @@ class ResponseObjectTest extends TestCase
         $this->assertIsArray($object->array);
         $this->assertCount(3, $object->array);
         $this->assertTrue($object->date instanceof DateTime);
+        $this->assertNull($object->null);
     }
 
     public function testJsonSerialize(): void
