@@ -16,6 +16,9 @@ use Setle\ApiAdapter\HttpApiAdapter;
 use Setle\ApiAdapter\ApiAdapterInterface;
 use Setle\Exception\AuthException;
 use InvalidArgumentException;
+use Setle\ApiAdapter\ApiAdapter;
+use Setle\Response\CollectionResponse;
+
 
 final class Setle
 {
@@ -23,68 +26,54 @@ final class Setle
     private $apiAdapter;
 
     /** @var string */
-    private $brokerToken;
+    private $clientId;
+
+    /** @var string */
+    private $clientSecret;
 
     /** @var string */
     private $accessToken;
 
-    /** @var array */
-    private $integrationEndpoints = [];
-
-    public function __construct(string $broker_token)
+    public function __construct(string $clientId, string $clientSecret)
     {
-        $this->setBrokerToken($broker_token);
+        $this->setCredentials($clientId, $clientSecret);
     }
 
-    // ENDPOINTS
-
-    public function whise(): IntegrationEndpoint
-    {
-        return $this->getIntegrationEndpoint('whise');
-    }
-
-    public function skarabee(): IntegrationEndpoint
-    {
-        return $this->getIntegrationEndpoint('skarabee');
-    }
-
-    public function sweepbright(): IntegrationEndpoint
-    {
-        return $this->getIntegrationEndpoint('sweepbright');
-    }
-
-    protected function getIntegrationEndpoint(string $integration_name): IntegrationEndpoint
-    {
-        if (!isset($this->integrationEndpoints[$integration_name])) {
-            $this->integrationEndpoints[$integration_name] = new IntegrationEndpoint($this, $integration_name);
-        }
-        return $this->integrationEndpoints[$integration_name];
-    }
-
-    // BROKER TOKEN
+    // CREDENTIALS
 
     /**
-     * Set broker token to use for authentication.
+     * Set Client ID and Client Secret to use for authentication.
      *
-     * @param string $broker_token
+     * @param string $client_id, $client_secret
      *
      * @return self
      */
-    public function setBrokerToken(string $broker_token): self
+    public function setCredentials(string $client_id, string $client_secret): self
     {
-        $this->brokerToken = $broker_token;
+        $this->clientId = $client_id;
+        $this->clientSecret = $client_secret;
         $this->accessToken = null;
         return $this;
-    }
+    }    
 
     /**
-     * Get the current broker token.
+     * Get the current client id.
      *
      * @return string
      */
-    public function getBrokerToken(): string
+    public function getClientId(): string
     {
-        return $this->brokerToken;
+        return $this->clientId;
+    }
+
+    /**
+     * Get the current client secret.
+     *
+     * @return string
+     */
+    public function getClientSecret(): string
+    {
+        return $this->clientSecret;
     }
 
     // ACCESS TOKEN
@@ -128,8 +117,9 @@ final class Setle
      */
     public function requestAccessToken(): Response
     {
-        $request = new Request('POST', 'agency/login', [
-            'token' => $this->getBrokerToken(),
+        $request = new Request('POST', 'oauth/token', null, [], [
+            'x-setle-client-id' => $this->getClientId(),
+            'x-setle-client-secret' => $this->getClientSecret(),
         ]);
         return new Response($this->getApiAdapter()->request($request));
     }
@@ -149,6 +139,7 @@ final class Setle
     public function request(Request $request): ResponseObject
     {
         $request->setAccessToken($this->getAccessToken());
+
         try {
             return $this->getApiAdapter()->request($request);
         } catch (AuthException $exception) {
@@ -174,13 +165,29 @@ final class Setle
         return $this->apiAdapter;
     }
 
+    // GET DATA
+
+    /**
+     * Get all estates.
+     *
+     * @throws Exception\AuthException if access token is missing or invalid
+     * @throws Exception\ApiException if a server-side error occurred
+     *
+     * @return CollectionResponse
+    */
+    public function getEstates(): CollectionResponse
+    {
+        $request = new Request('GET', 'estate/list');
+        return new CollectionResponse($this->request($request));
+    }
+
     // DEBUGGING
 
     /**
      * Set a callback for debugging API requests and responses.
      *
      * @param callable|null $callable Callback that accepts up to three
-     * arguments - respectively the response body, request endpoint, and the
+     * arguments - respectively the response body, and the
      * request body.
      *
      * @return self

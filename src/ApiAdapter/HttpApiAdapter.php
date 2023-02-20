@@ -22,7 +22,7 @@ use PackageVersions\Versions;
  */
 final class HttpApiAdapter extends ApiAdapter
 {
-    private const BASE_URI = 'https://api.setle.be/v1/';
+    private const BASE_URI = 'https://public-api.setle.app/v1/';
 
     /** @var Client */
     private $client;
@@ -73,7 +73,7 @@ final class HttpApiAdapter extends ApiAdapter
         $guzzle_request = new GuzzleRequest($request->getMethod(), $request->getEndpoint(), $headers);
         $response = $this->client->send($guzzle_request, $options);
         $body = $response->getBody()->getContents();
-
+        
         // Handle errors
         if ($response->getStatusCode() >= 400) {
             $response_data = @json_decode($body, false);

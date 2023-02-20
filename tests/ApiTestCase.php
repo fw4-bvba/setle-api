@@ -23,7 +23,7 @@ abstract class ApiTestCase extends TestCase
         parent::setUpBeforeClass();
 
         self::$adapter = new TestApiAdapter();
-        self::$api = new Setle('');
+        self::$api = new Setle('', '');
         self::$api->setApiAdapter(self::$adapter);
     }
 

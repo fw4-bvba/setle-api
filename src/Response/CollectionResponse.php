@@ -16,7 +16,7 @@ class CollectionResponse implements \Countable, \IteratorAggregate, \ArrayAccess
 
     public function __construct(ResponseObject $data)
     {
-        $this->data = array_values($data->getData());
+        $this->data = (array_key_exists('estates',$data->getData())?array_values($data->getData()['estates']):$data->getData());
     }
 
     /**

@@ -19,20 +19,20 @@ class SetleTest extends ApiTestCase
 {
     public function testBrokerToken(): void
     {
-        $api = new Setle('foo');
+        $api = new Setle('foo', 'bar');
         $this->assertEquals('foo', $api->getBrokerToken());
     }
 
     public function testSetAccessToken(): void
     {
-        $api = new Setle('foo');
+        $api = new Setle('foo', 'bar');
         $api->setAccessToken('bar');
         $this->assertEquals('bar', $api->getAccessToken());
     }
 
     public function testSetAccessTokenArray(): void
     {
-        $api = new Setle('foo');
+        $api = new Setle('foo', 'bar');
         $api->setAccessToken([
             'access_token' => 'bar'
         ]);
@@ -41,7 +41,7 @@ class SetleTest extends ApiTestCase
 
     public function testSetAccessTokenObject(): void
     {
-        $api = new Setle('foo');
+        $api = new Setle('foo', 'bar');
         $api->setAccessToken((object)[
             'access_token' => 'bar'
         ]);
@@ -51,7 +51,7 @@ class SetleTest extends ApiTestCase
     public function testSetAccessTokenInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $api = new Setle('foo');
+        $api = new Setle('foo', 'bar');
         $api->setAccessToken(1);
     }
 
@@ -65,7 +65,7 @@ class SetleTest extends ApiTestCase
 
     public function testDefaultApiAdapter(): void
     {
-        $api = new Setle('foo');
+        $api = new Setle('foo', 'bar');
 
         $this->assertInstanceOf(HttpApiAdapter::class, $api->getApiAdapter());
     }
@@ -93,81 +93,17 @@ class SetleTest extends ApiTestCase
         $this->assertEquals($unique_token, self::$api->getAccessToken());
     }
 
-    // WHISE
+    // Estates
 
-    public function testWhiseGetEstates(): void
+    public function testGetEstates(): void
     {
         self::$adapter->queueResponse('[{"foo": "bar"}]');
         self::$api->debugResponses(function($response_body, $endpoint, $request_body) use (&$called) {
-            $this->assertEquals('/v1/integrations/whise/estates', $endpoint);
+            $this->assertEquals('/v1/estate/list', $endpoint);
         });
 
-        $response = self::$api->whise()->getEstates();
+        $response = self::$api->getEstates();
 
         $this->assertEquals(1, $response->count());
-    }
-
-    public function testWhiseGetEstate(): void
-    {
-        self::$adapter->queueResponse('{"foo": "bar"}');
-        self::$api->debugResponses(function($response_body, $endpoint, $request_body) use (&$called) {
-            $this->assertEquals('/v1/integrations/whise/estates/123', $endpoint);
-        });
-
-        $response = self::$api->whise()->getEstate('123');
-
-        $this->assertEquals('bar', $response->foo);
-    }
-
-    // SKARABEE
-
-    public function testSkarabeeGetEstates(): void
-    {
-        self::$adapter->queueResponse('[{"foo": "bar"}]');
-        self::$api->debugResponses(function($response_body, $endpoint, $request_body) use (&$called) {
-            $this->assertEquals('/v1/integrations/skarabee/estates', $endpoint);
-        });
-
-        $response = self::$api->skarabee()->getEstates();
-
-        $this->assertEquals(1, $response->count());
-    }
-
-    public function testSkarabeeGetEstate(): void
-    {
-        self::$adapter->queueResponse('{"foo": "bar"}');
-        self::$api->debugResponses(function($response_body, $endpoint, $request_body) use (&$called) {
-            $this->assertEquals('/v1/integrations/skarabee/estates/123', $endpoint);
-        });
-
-        $response = self::$api->skarabee()->getEstate('123');
-
-        $this->assertEquals('bar', $response->foo);
-    }
-
-    // SWEEPBRIGHT
-
-    public function testSweepbrightGetEstates(): void
-    {
-        self::$adapter->queueResponse('[{"foo": "bar"}]');
-        self::$api->debugResponses(function($response_body, $endpoint, $request_body) use (&$called) {
-            $this->assertEquals('/v1/integrations/sweepbright/estates', $endpoint);
-        });
-
-        $response = self::$api->sweepbright()->getEstates();
-
-        $this->assertEquals(1, $response->count());
-    }
-
-    public function testSweepbrightGetEstate(): void
-    {
-        self::$adapter->queueResponse('{"foo": "bar"}');
-        self::$api->debugResponses(function($response_body, $endpoint, $request_body) use (&$called) {
-            $this->assertEquals('/v1/integrations/sweepbright/estates/123', $endpoint);
-        });
-
-        $response = self::$api->sweepbright()->getEstate('123');
-
-        $this->assertEquals('bar', $response->foo);
     }
 }
