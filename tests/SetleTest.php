@@ -17,10 +17,16 @@ use InvalidArgumentException;
 
 class SetleTest extends ApiTestCase
 {
-    public function testBrokerToken(): void
+    public function testClientId(): void
     {
         $api = new Setle('foo', 'bar');
-        $this->assertEquals('foo', $api->getBrokerToken());
+        $this->assertEquals('foo', $api->getClientId());
+    }
+
+    public function testClientSecret(): void
+    {
+        $api = new Setle('foo', 'bar');
+        $this->assertEquals('bar', $api->getClientSecret());
     }
 
     public function testSetAccessToken(): void
@@ -98,8 +104,10 @@ class SetleTest extends ApiTestCase
     public function testGetEstates(): void
     {
         self::$adapter->queueResponse('[{"foo": "bar"}]');
-        self::$api->debugResponses(function($response_body, $endpoint, $request_body) use (&$called) {
-            $this->assertEquals('/v1/estate/list', $endpoint);
+        self::$api->debugResponses(function ($response_body, $endpoint, $request_body) use (&$called) {
+            $this->assertEquals('estate/list', $endpoint);
+            $this->assertEquals('[{"foo": "bar"}]', $response_body);
+            $this->assertEquals(null, $request_body);
         });
 
         $response = self::$api->getEstates();

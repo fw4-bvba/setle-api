@@ -12,12 +12,13 @@ namespace Setle\Tests\Response;
 use PHPUnit\Framework\TestCase;
 use Setle\Response\ResponseObject;
 use Setle\Response\CollectionResponse;
+use PHPUnit\Framework\Error\Notice;
 
 class CollectionResponseTest extends TestCase
 {
-    static protected $responseData;
+    protected static $responseData;
 
-    static public function setUpBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -58,7 +59,7 @@ class CollectionResponseTest extends TestCase
     {
         $object = new CollectionResponse(self::$responseData);
 
-        $this->expectNotice();
+        $this->expectException(Notice::class);
         $invalid = $object[3];
     }
 

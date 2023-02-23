@@ -34,7 +34,7 @@ abstract class ApiAdapter implements ApiAdapterInterface
 
         // Send response to debug callback
         if (isset($this->debugCallable)) {
-            ($this->debugCallable)($response_body, $request->getBody());
+            ($this->debugCallable)($response_body, $request->getEndpoint(), $request->getBody());
         }
 
         $response = json_decode($response_body, false);
@@ -45,7 +45,7 @@ abstract class ApiAdapter implements ApiAdapterInterface
      * Set a callback for debugging API requests and responses.
      *
      * @param callable|null $callable Callback that accepts up to three
-     * arguments - respectively the response body and the
+     * arguments - respectively the response body, request endpoint and the
      * request body.
      *
      * @return Self

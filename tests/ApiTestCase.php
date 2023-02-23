@@ -15,10 +15,10 @@ use Exception;
 
 abstract class ApiTestCase extends TestCase
 {
-    static protected $adapter;
-    static protected $api;
+    protected static $adapter;
+    protected static $api;
 
-    static public function setUpBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 

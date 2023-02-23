@@ -9,6 +9,7 @@
 
 namespace Setle\Request;
 
+use Setle\Exception\FailedJsonEncodingException;
 use DateTime;
 
 class Request
@@ -179,7 +180,11 @@ class Request
         if (is_null($this->body) || is_string($this->body)) {
             return $this->body;
         } else {
-            return json_encode($this->encode($this->body)) ?: '';
+            $json = json_encode($this->encode($this->body)) ?: '';
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new FailedJsonEncodingException('Json Encoding for "' . gettype($this->body) . '" failed.');
+            }
+            return $json;
         }
     }
 

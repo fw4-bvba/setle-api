@@ -27,15 +27,12 @@ class ResponseObject implements \JsonSerializable
     {
         if (!is_iterable($data) && !is_object($data)) {
             throw new InvalidArgumentException('ResponseObject does not accept data of type "' . gettype($data) . '"');
-        } elseif (!is_iterable($data) && is_object($data)) {
-            $this->data = (array) $data;
-        } elseif (is_iterable($data)) {
-            foreach ($data as $property => &$value) {
-                if (is_array($data)) {
-                    $this->data[] = $this->parseValue($value);
-                } else {
-                    $this->data[$property] = $this->parseValue($value);
-                }
+        }
+        foreach ($data as $property => &$value) {
+            if (is_array($data)) {
+                $this->data[] = $this->parseValue($value);
+            } else {
+                $this->data[$property] = $this->parseValue($value);
             }
         }
     }
@@ -95,14 +92,12 @@ class ResponseObject implements \JsonSerializable
      * Set value of specific property of this object.
      *
      * @param string $property
-     * @param mixed $value
+     * @param string $value
      *
-     * @return array<mixed>
      */
-    public function __set(string $property, mixed $value): array
+    public function __set(string $property, string $value): void
     {
         $this->data[$property] = $value;
-        return $this->data;
     }
 
     public function __isset(string $property): bool

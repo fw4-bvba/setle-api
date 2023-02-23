@@ -185,7 +185,7 @@ final class Setle
      * Set a callback for debugging API requests and responses.
      *
      * @param callable|null $callable Callback that accepts up to three
-     * arguments - respectively the response body, and the
+     * arguments - respectively the response body, request endpoint and the
      * request body.
      *
      * @return self
