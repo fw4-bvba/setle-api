@@ -9,7 +9,6 @@
 
 namespace Setle\Exception;
 
-class ApiException extends \Exception
+class ApiException extends \Exception implements \Throwable
 {
-
 }

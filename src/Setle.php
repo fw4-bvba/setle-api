@@ -19,10 +19,9 @@ use InvalidArgumentException;
 use Setle\ApiAdapter\ApiAdapter;
 use Setle\Response\CollectionResponse;
 
-
 final class Setle
 {
-    /** @var ApiAdapterInterface */
+    /** @var ApiAdapter|null */
     private $apiAdapter;
 
     /** @var string */
@@ -31,7 +30,7 @@ final class Setle
     /** @var string */
     private $clientSecret;
 
-    /** @var string */
+    /** @var string|null */
     private $accessToken;
 
     public function __construct(string $clientId, string $clientSecret)
@@ -54,7 +53,7 @@ final class Setle
         $this->clientSecret = $client_secret;
         $this->accessToken = null;
         return $this;
-    }    
+    }
 
     /**
      * Get the current client id.
@@ -83,7 +82,7 @@ final class Setle
      *
      * @param mixed $access_token
      */
-    public function setAccessToken($access_token): self
+    public function setAccessToken($access_token): string
     {
         if (is_array($access_token) && isset($access_token['access_token'])) {
             $access_token = strval($access_token['access_token']);
@@ -94,7 +93,7 @@ final class Setle
             throw new InvalidArgumentException('Invalid access token provided');
         }
         $this->accessToken = $access_token;
-        return $this;
+        return $access_token;
     }
 
     /**
@@ -139,7 +138,6 @@ final class Setle
     public function request(Request $request): ResponseObject
     {
         $request->setAccessToken($this->getAccessToken());
-
         try {
             return $this->getApiAdapter()->request($request);
         } catch (AuthException $exception) {
@@ -151,13 +149,13 @@ final class Setle
 
     // API ADAPTER
 
-    public function setApiAdapter(ApiAdapterInterface $adapter): self
+    public function setApiAdapter(ApiAdapter $adapter): self
     {
         $this->apiAdapter = $adapter;
         return $this;
     }
 
-    public function getApiAdapter(): ApiAdapterInterface
+    public function getApiAdapter(): ApiAdapter
     {
         if (!isset($this->apiAdapter)) {
             $this->setApiAdapter(new HttpApiAdapter());

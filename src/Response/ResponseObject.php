@@ -15,19 +15,27 @@ use Setle\Exception\InvalidPropertyException;
 
 class ResponseObject implements \JsonSerializable
 {
-    /** @var array */
-    protected $_data = [];
+    /** @var array<mixed> */
+    protected $data = [];
 
+    /**
+     * @param mixed $data
+     *
+     * @return self
+     */
     public function __construct($data)
     {
         if (!is_iterable($data) && !is_object($data)) {
             throw new InvalidArgumentException('ResponseObject does not accept data of type "' . gettype($data) . '"');
-        }
-        foreach ($data as $property => &$value) {
-            if (is_array($data)) {
-                $this->_data[] = $this->parseValue($value);
-            } else {
-                $this->_data[$property] = $this->parseValue($value);
+        } elseif (!is_iterable($data) && is_object($data)) {
+            $this->data = (array) $data;
+        } elseif (is_iterable($data)) {
+            foreach ($data as $property => &$value) {
+                if (is_array($data)) {
+                    $this->data[] = $this->parseValue($value);
+                } else {
+                    $this->data[$property] = $this->parseValue($value);
+                }
             }
         }
     }
@@ -37,19 +45,25 @@ class ResponseObject implements \JsonSerializable
      *
      * @param mixed $value
      *
-     * @return self
+     * @return mixed
      */
     protected function parseValue($value)
     {
         if (is_object($value)) {
             return new self($value);
-        } else if (is_array($value)) {
+        } elseif (is_array($value)) {
             $result = [];
             foreach ($value as &$subvalue) {
                 $result[] = $this->parseValue($subvalue);
             }
             return $result;
-        } else if (is_string($value) && preg_match('/^(?:[1-9]\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-][01]\d:[0-5]\d)?$/', $value)) {
+        } elseif (
+            is_string($value) &&
+            preg_match('/^(?:[1-9]\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\d|2[0-8])|' .
+            '(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\d(?:0[48]|' .
+            '[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\d|' .
+            '2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-][01]\d:[0-5]\d)?$/', $value)
+        ) {
             return new \DateTime($value);
         } else {
             return $value;
@@ -59,37 +73,53 @@ class ResponseObject implements \JsonSerializable
     /**
      * Get all properties of this object.
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getData(): array
     {
-        return $this->_data;
+        return $this->data;
     }
 
+    /**
+     * Get value of specific property of this object.
+     *
+     * @return string
+     */
     public function __get(string $property)
     {
         $this->validatePropertyName($property);
-        return $this->_data[$property] ?? null;
+        return $this->data[$property] ?? null;
     }
 
-    public function __set(string $property, $value)
+    /**
+     * Set value of specific property of this object.
+     *
+     * @param string $property
+     * @param mixed $value
+     *
+     * @return array<mixed>
+     */
+    public function __set(string $property, mixed $value): array
     {
-        $this->_data[$property] = $value;
+        $this->data[$property] = $value;
+        return $this->data;
     }
 
     public function __isset(string $property): bool
     {
-        return isset($this->_data[$property]);
+        return isset($this->data[$property]);
     }
 
     public function __unset(string $property)
     {
         $this->validatePropertyName($property);
-        unset($this->_data[$property]);
+        unset($this->data[$property]);
     }
 
     /**
      * @codeCoverageIgnore
+     *
+     * @return array<mixed>
      */
     public function __debugInfo()
     {
@@ -107,7 +137,7 @@ class ResponseObject implements \JsonSerializable
      */
     protected function validatePropertyName(string $property): string
     {
-        if (!array_key_exists($property, $this->_data)) {
+        if (!array_key_exists($property, $this->data)) {
             throw new InvalidPropertyException($property . ' is not a valid property of ' . static::class);
         }
         return $property;

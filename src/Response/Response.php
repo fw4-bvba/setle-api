@@ -13,6 +13,6 @@ class Response extends ResponseObject
 {
     public function __construct(ResponseObject $response)
     {
-        $this->_data = $response->getData();
+        $this->data = $response->getData();
     }
 }

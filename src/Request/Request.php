@@ -19,15 +19,22 @@ class Request
     /** @var string */
     protected $endpoint;
 
-    /** @var array */
+    /** @var array<string> */
     protected $parameters;
 
-    /** @var array */
+    /** @var array<string> */
     protected $headers;
 
-    /** @var array|string|null */
+    /** @var array<mixed>|string|null */
     protected $body;
 
+    /**
+     * @param string $method
+     * @param string $endpoint
+     * @param mixed $body
+     * @param array<mixed> $parameters
+     * @param array<mixed> $headers
+     */
     public function __construct(
         string $method,
         string $endpoint,
@@ -106,7 +113,7 @@ class Request
     /**
      * Set the HTTP query string parameters.
      *
-     * @param array $parameters Associative array of parameter names and values
+     * @param array<string> $parameters Associative array of parameter names and values
      *
      * @return self
      */
@@ -119,7 +126,7 @@ class Request
     /**
      * Get the HTTP query string parameters.
      *
-     * @return array Unencoded associative array of parameter names and values
+     * @return array<string> Unencoded associative array of parameter names and values
      */
     public function getParameters(): array
     {
@@ -129,7 +136,7 @@ class Request
     /**
      * Set additional HTTP headers.
      *
-     * @param array $parameters Associative array of header names and values
+     * @param array<string> $headers Associative array of header names and values
      *
      * @return self
      */
@@ -142,7 +149,7 @@ class Request
     /**
      * Get additional HTTP headers.
      *
-     * @return array Associative array of header names and values
+     * @return array<string> Associative array of header names and values
      */
     public function getHeaders(): array
     {
@@ -152,7 +159,7 @@ class Request
     /**
      * Set the HTTP body to send.
      *
-     * @param array|string $body Raw string or associative array to send as JSON
+     * @param array<mixed>|string $body Raw string or associative array to send as JSON
      *
      * @return self
      */
@@ -172,7 +179,7 @@ class Request
         if (is_null($this->body) || is_string($this->body)) {
             return $this->body;
         } else {
-            return json_encode($this->encode($this->body));
+            return json_encode($this->encode($this->body)) ?: '';
         }
     }
 
@@ -181,7 +188,7 @@ class Request
      *
      * @param mixed $encodable
      *
-     * @return self
+     * @return string
      */
     protected function encode($encodable)
     {

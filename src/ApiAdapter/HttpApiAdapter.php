@@ -27,6 +27,9 @@ final class HttpApiAdapter extends ApiAdapter
     /** @var Client */
     private $client;
 
+    /**
+     * @param array<mixed> $http_client_options
+     */
     public function __construct(array $http_client_options = [])
     {
         $http_client_options['base_uri'] = self::BASE_URI;
@@ -41,7 +44,7 @@ final class HttpApiAdapter extends ApiAdapter
         $http_client_options['headers']['Content-Type'] = 'application/json';
 
         $this->client = new Client(array_merge([
-            'timeout' => 10.0,
+            'timeout' => 30.0,
             'http_errors' => false,
         ], $http_client_options));
     }
@@ -49,9 +52,11 @@ final class HttpApiAdapter extends ApiAdapter
     /**
      * {@inheritdoc}
      *
-     * @throws Exception\AuthException if access token is missing or invalid
-     * @throws Exception\NotFoundException if requested resource is unavailable
-     * @throws Exception\ApiException if a server-side error occurred
+     * @throws \Setle\Exception\AuthException if access token is missing or invalid
+     * @throws \Setle\Exception\NotFoundException if requested resource is unavailable
+     * @throws \Setle\Exception\ApiException if a server-side error occurred
+     *
+     * @return string
      */
     public function requestBody(Request $request): string
     {
@@ -73,7 +78,7 @@ final class HttpApiAdapter extends ApiAdapter
         $guzzle_request = new GuzzleRequest($request->getMethod(), $request->getEndpoint(), $headers);
         $response = $this->client->send($guzzle_request, $options);
         $body = $response->getBody()->getContents();
-        
+
         // Handle errors
         if ($response->getStatusCode() >= 400) {
             $response_data = @json_decode($body, false);
