@@ -98,12 +98,12 @@ final class Setle
     /**
      * Get the current access token.
      *
-     * @return string|null
+     * @return string
      */
-    public function getAccessToken(): ?string
+    public function getAccessToken(): string
     {
         if (is_null($this->accessToken)) {
-            $this->setAccessToken($this->requestAccessToken());
+            return $this->accessToken ?? $this->setAccessToken($this->requestAccessToken());
         }
         return $this->accessToken;
     }
@@ -157,7 +157,7 @@ final class Setle
     public function getApiAdapter(): ApiAdapter
     {
         if (!isset($this->apiAdapter)) {
-            $this->setApiAdapter(new HttpApiAdapter());
+            $this->apiAdapter = new HttpApiAdapter();
         }
         return $this->apiAdapter;
     }

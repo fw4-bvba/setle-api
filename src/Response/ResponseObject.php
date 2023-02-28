@@ -79,7 +79,7 @@ class ResponseObject implements \JsonSerializable
     /**
      * Get value of specific property of this object.
      *
-     * @return string
+     * @return mixed
      */
     public function __get(string $property)
     {
@@ -91,10 +91,10 @@ class ResponseObject implements \JsonSerializable
      * Set value of specific property of this object.
      *
      * @param string $property
-     * @param string $value
+     * @param mixed $value
      *
      */
-    public function __set(string $property, string $value): void
+    public function __set(string $property, $value): void
     {
         $this->data[$property] = $value;
     }
