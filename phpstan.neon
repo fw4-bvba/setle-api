@@ -4,7 +4,7 @@ parameters:
         - src
         - tests
     universalObjectCratesClasses:
-        - Skarabee\Weblink\Response\ResponseObject
+        - Setle\Response\ResponseObject
     ignoreErrors:
         -
             message: '#^Argument of an invalid type iterable\|object supplied for foreach, only iterables are supported\.$#'
