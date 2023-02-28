@@ -10,7 +10,6 @@
 namespace Setle\Response;
 
 use InvalidArgumentException;
-use Setle\ApiAdapter\ApiAdapter;
 use Setle\Exception\InvalidPropertyException;
 
 class ResponseObject implements \JsonSerializable

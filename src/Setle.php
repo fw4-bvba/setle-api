@@ -13,7 +13,6 @@ use Setle\Request\Request;
 use Setle\Response\Response;
 use Setle\Response\ResponseObject;
 use Setle\ApiAdapter\HttpApiAdapter;
-use Setle\ApiAdapter\ApiAdapterInterface;
 use Setle\Exception\AuthException;
 use InvalidArgumentException;
 use Setle\ApiAdapter\ApiAdapter;

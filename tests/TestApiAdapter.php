@@ -10,7 +10,6 @@
 namespace Setle\Tests;
 
 use Setle\ApiAdapter\ApiAdapter;
-use Setle\ApiAdapter\ApiAdapterInterface;
 use Setle\Request\Request;
 use Exception;
 
