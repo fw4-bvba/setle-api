@@ -5,16 +5,21 @@ PHP client for the [Setle](https://www.setle.be) API. For information and terms 
 
 ## Installation
 
-`composer require fw4/setle-api "^2.0"`
+`composer require fw4/setle-api`
 
 ## Usage
 
 ```php
+use Setle\Setle;
+
 // Instantiate the API using a client id and client secret
-$api = new Setle\Setle('0123456789abcdef', '0123456789abcdef');
+$api = new Setle('client-id-string', 'client-secret-string');
 
 // Request a list of estates
 $estates = $api->getEstates();
+foreach ($estates as $estate) {
+    echo $estate->estate->estate_type . ': ' . $estate->referral_link . PHP_EOL;
+}
 ```
 
 ## Access tokens
