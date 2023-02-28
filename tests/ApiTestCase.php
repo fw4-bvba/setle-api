@@ -15,7 +15,10 @@ use Exception;
 
 abstract class ApiTestCase extends TestCase
 {
+    /** @var TestApiAdapter */
     protected static $adapter;
+
+    /** @var Setle */
     protected static $api;
 
     public static function setUpBeforeClass(): void
@@ -35,10 +38,20 @@ abstract class ApiTestCase extends TestCase
         self::$adapter->debugResponses(null);
     }
 
+    /**
+     * Queue a response to be returned by the adapter.
+     *
+     * @param string|Exception $body
+     *
+     * @return void
+     */
     public function queueResponse($body): void
     {
         if (!is_string($body)) {
             $body = json_encode($body);
+            if ($body === false) {
+                throw new Exception('Attempted to queue invalid response.');
+            }
         }
         self::$adapter->queueResponse($body);
     }

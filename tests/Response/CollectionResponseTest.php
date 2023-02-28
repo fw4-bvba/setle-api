@@ -16,6 +16,7 @@ use PHPUnit\Framework\Error\Notice;
 
 class CollectionResponseTest extends TestCase
 {
+    /** @var ResponseObject */
     protected static $responseData;
 
     public static function setUpBeforeClass(): void
@@ -45,6 +46,8 @@ class CollectionResponseTest extends TestCase
 
         $this->assertTrue(isset($object[2]));
         $this->assertFalse(isset($object[3]));
+
+        // @phpstan-ignore-next-line
         $this->assertFalse(isset($object['string']));
     }
 

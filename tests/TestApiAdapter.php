@@ -15,7 +15,7 @@ use Exception;
 
 final class TestApiAdapter extends ApiAdapter
 {
-    /** @var array */
+    /** @var array<string|Exception> */
     protected $responseQueue = [];
 
     public function clearQueue(): void
@@ -39,7 +39,7 @@ final class TestApiAdapter extends ApiAdapter
     public function requestBody(Request $request): string
     {
         if (count($this->responseQueue) === 0) {
-            return null;
+            return '{}';
         }
 
         $response = $this->responseQueue[0];

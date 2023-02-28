@@ -103,8 +103,12 @@ class SetleTest extends ApiTestCase
 
     public function testGetEstates(): void
     {
+        $called = false;
+
         self::$adapter->queueResponse('[{"foo": "bar"}]');
         self::$api->debugResponses(function ($response_body, $endpoint, $request_body) use (&$called) {
+            $called = true;
+
             $this->assertEquals('estate/list', $endpoint);
             $this->assertEquals('[{"foo": "bar"}]', $response_body);
             $this->assertEquals(null, $request_body);
@@ -112,6 +116,7 @@ class SetleTest extends ApiTestCase
 
         $response = self::$api->getEstates();
 
+        $this->assertTrue($called);
         $this->assertEquals(1, $response->count());
     }
 }

@@ -39,7 +39,7 @@ class RequestTest extends TestCase
             'date' => new DateTime('2020-01-01 12:00:00'),
         ]);
 
-        $body = json_decode($request->getBody(), true);
+        $body = json_decode($request->getBody() ?? '{}', true);
 
         $this->assertEquals($body['array'], ['foo' => 'bar']);
         $this->assertEquals(substr($body['date'], 0, 19), '2020-01-01T12:00:00');
