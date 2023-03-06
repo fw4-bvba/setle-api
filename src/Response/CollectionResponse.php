@@ -9,14 +9,19 @@
 
 namespace Setle\Response;
 
+/**
+ * @implements \IteratorAggregate<int, string>
+ * @implements \ArrayAccess<int, string>
+*/
 class CollectionResponse implements \Countable, \IteratorAggregate, \ArrayAccess
 {
-    /** @var array */
+    /** @var array<mixed> */
     protected $data;
 
     public function __construct(ResponseObject $data)
     {
-        $this->data = array_values($data->getData());
+        $this->data = (array_key_exists('estates', $data->getData()) ?
+        array_values($data->getData()['estates']) : $data->getData());
     }
 
     /**
@@ -31,6 +36,9 @@ class CollectionResponse implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * @codeCoverageIgnore
+     *
+     * @return array<mixed>
+     *
      */
     public function __debugInfo(): array
     {

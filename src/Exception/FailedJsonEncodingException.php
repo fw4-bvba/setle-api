@@ -9,6 +9,6 @@
 
 namespace Setle\Exception;
 
-class InvalidPropertyException extends \Exception
+class FailedJsonEncodingException extends \Exception
 {
 }

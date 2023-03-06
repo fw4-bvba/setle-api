@@ -1,7 +1,7 @@
 # Setle API
 
 PHP client for the [Setle](https://www.setle.be) API. For information and terms of use, refer to the
-[official documentation](https://api.setle.be).
+[official documentation](https://public-api.setle.app/).
 
 ## Installation
 
@@ -10,24 +10,16 @@ PHP client for the [Setle](https://www.setle.be) API. For information and terms 
 ## Usage
 
 ```php
-// Instantiate the API using a broker token
-$api = new Setle\Setle('0123456789abcdef');
+use Setle\Setle;
+
+// Instantiate the API using a client id and client secret
+$api = new Setle('client-id-string', 'client-secret-string');
 
 // Request a list of estates
-$estates = $api->whise()->getEstates();
-```
-
-### Available endpoints
-
-Use the following methods to access available endpoints:
-
-```php
-$api->whise()->getEstates();
-$api->whise()->getEstate($id);
-$api->skarabee()->getEstates();
-$api->skarabee()->getEstate($id);
-$api->sweepbright()->getEstates();
-$api->sweepbright()->getEstate($id);
+$estates = $api->getEstates();
+foreach ($estates as $estate) {
+    echo $estate->estate->estate_type . ': ' . $estate->referral_link . PHP_EOL;
+}
 ```
 
 ## Access tokens

@@ -9,6 +9,9 @@
 
 namespace Setle\Response;
 
+/**
+ * @implements \Iterator<int, string>
+ */
 class CollectionResponseIterator implements \Iterator
 {
     /** @var CollectionResponse */

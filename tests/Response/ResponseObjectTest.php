@@ -110,7 +110,7 @@ class ResponseObjectTest extends TestCase
         ];
         $object = new ResponseObject($input);
 
-        $this->assertIsObject($object->object);
+        $this->assertInstanceOf(ResponseObject::class, $object->object);
         $this->assertEquals(10, $object->object->foo);
         $this->assertIsArray($object->array);
         $this->assertCount(3, $object->array);
@@ -124,7 +124,7 @@ class ResponseObjectTest extends TestCase
             'foo' => 10
         ];
         $object = new ResponseObject($input);
-        $data = json_decode(json_encode($object), false);
+        $data = json_decode(json_encode($object) ?: '{}', false);
 
         $this->assertEquals(10, $data->foo);
     }

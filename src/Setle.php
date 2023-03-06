@@ -13,78 +13,65 @@ use Setle\Request\Request;
 use Setle\Response\Response;
 use Setle\Response\ResponseObject;
 use Setle\ApiAdapter\HttpApiAdapter;
-use Setle\ApiAdapter\ApiAdapterInterface;
 use Setle\Exception\AuthException;
 use InvalidArgumentException;
+use Setle\ApiAdapter\ApiAdapter;
+use Setle\Response\CollectionResponse;
 
 final class Setle
 {
-    /** @var ApiAdapterInterface */
+    /** @var ApiAdapter|null */
     private $apiAdapter;
 
     /** @var string */
-    private $brokerToken;
+    private $clientId;
 
     /** @var string */
+    private $clientSecret;
+
+    /** @var string|null */
     private $accessToken;
 
-    /** @var array */
-    private $integrationEndpoints = [];
-
-    public function __construct(string $broker_token)
+    public function __construct(string $clientId, string $clientSecret)
     {
-        $this->setBrokerToken($broker_token);
+        $this->setCredentials($clientId, $clientSecret);
     }
 
-    // ENDPOINTS
-
-    public function whise(): IntegrationEndpoint
-    {
-        return $this->getIntegrationEndpoint('whise');
-    }
-
-    public function skarabee(): IntegrationEndpoint
-    {
-        return $this->getIntegrationEndpoint('skarabee');
-    }
-
-    public function sweepbright(): IntegrationEndpoint
-    {
-        return $this->getIntegrationEndpoint('sweepbright');
-    }
-
-    protected function getIntegrationEndpoint(string $integration_name): IntegrationEndpoint
-    {
-        if (!isset($this->integrationEndpoints[$integration_name])) {
-            $this->integrationEndpoints[$integration_name] = new IntegrationEndpoint($this, $integration_name);
-        }
-        return $this->integrationEndpoints[$integration_name];
-    }
-
-    // BROKER TOKEN
+    // CREDENTIALS
 
     /**
-     * Set broker token to use for authentication.
+     * Set Client ID and Client Secret to use for authentication.
      *
-     * @param string $broker_token
+     * @param string $client_id, $client_secret
      *
      * @return self
      */
-    public function setBrokerToken(string $broker_token): self
+    public function setCredentials(string $client_id, string $client_secret): self
     {
-        $this->brokerToken = $broker_token;
+        $this->clientId = $client_id;
+        $this->clientSecret = $client_secret;
         $this->accessToken = null;
         return $this;
     }
 
     /**
-     * Get the current broker token.
+     * Get the current client id.
      *
      * @return string
      */
-    public function getBrokerToken(): string
+    public function getClientId(): string
     {
-        return $this->brokerToken;
+        return $this->clientId;
+    }
+
+    /**
+     * Get the current client secret.
+     *
+     * @return string
+     */
+    public function getClientSecret(): string
+    {
+        return $this->clientSecret;
     }
 
     // ACCESS TOKEN
@@ -94,7 +81,7 @@ final class Setle
      *
      * @param mixed $access_token
      */
-    public function setAccessToken($access_token): self
+    public function setAccessToken($access_token): string
     {
         if (is_array($access_token) && isset($access_token['access_token'])) {
             $access_token = strval($access_token['access_token']);
@@ -105,18 +92,18 @@ final class Setle
             throw new InvalidArgumentException('Invalid access token provided');
         }
         $this->accessToken = $access_token;
-        return $this;
+        return $access_token;
     }
 
     /**
      * Get the current access token.
      *
-     * @return string|null
+     * @return string
      */
-    public function getAccessToken(): ?string
+    public function getAccessToken(): string
     {
         if (is_null($this->accessToken)) {
-            $this->setAccessToken($this->requestAccessToken());
+            return $this->accessToken ?? $this->setAccessToken($this->requestAccessToken());
         }
         return $this->accessToken;
     }
@@ -128,8 +115,9 @@ final class Setle
      */
     public function requestAccessToken(): Response
     {
-        $request = new Request('POST', 'agency/login', [
-            'token' => $this->getBrokerToken(),
+        $request = new Request('POST', 'oauth/token', null, [], [
+            'x-setle-client-id' => $this->getClientId(),
+            'x-setle-client-secret' => $this->getClientSecret(),
         ]);
         return new Response($this->getApiAdapter()->request($request));
     }
@@ -160,18 +148,34 @@ final class Setle
 
     // API ADAPTER
 
-    public function setApiAdapter(ApiAdapterInterface $adapter): self
+    public function setApiAdapter(ApiAdapter $adapter): self
     {
         $this->apiAdapter = $adapter;
         return $this;
     }
 
-    public function getApiAdapter(): ApiAdapterInterface
+    public function getApiAdapter(): ApiAdapter
     {
         if (!isset($this->apiAdapter)) {
-            $this->setApiAdapter(new HttpApiAdapter());
+            $this->apiAdapter = new HttpApiAdapter();
         }
         return $this->apiAdapter;
+    }
+
+    // GET DATA
+
+    /**
+     * Get all estates.
+     *
+     * @throws Exception\AuthException if access token is missing or invalid
+     * @throws Exception\ApiException if a server-side error occurred
+     *
+     * @return CollectionResponse
+    */
+    public function getEstates(): CollectionResponse
+    {
+        $request = new Request('GET', 'estate/list');
+        return new CollectionResponse($this->request($request));
     }
 
     // DEBUGGING
@@ -180,7 +184,7 @@ final class Setle
      * Set a callback for debugging API requests and responses.
      *
      * @param callable|null $callable Callback that accepts up to three
-     * arguments - respectively the response body, request endpoint, and the
+     * arguments - respectively the response body, request endpoint and the
      * request body.
      *
      * @return self

@@ -11,5 +11,4 @@ namespace Setle\Exception;
 
 class AuthException extends \Exception
 {
-
 }

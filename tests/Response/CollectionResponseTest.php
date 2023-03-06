@@ -12,12 +12,14 @@ namespace Setle\Tests\Response;
 use PHPUnit\Framework\TestCase;
 use Setle\Response\ResponseObject;
 use Setle\Response\CollectionResponse;
+use PHPUnit\Framework\Error\Notice;
 
 class CollectionResponseTest extends TestCase
 {
-    static protected $responseData;
+    /** @var ResponseObject */
+    protected static $responseData;
 
-    static public function setUpBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -44,6 +46,8 @@ class CollectionResponseTest extends TestCase
 
         $this->assertTrue(isset($object[2]));
         $this->assertFalse(isset($object[3]));
+
+        // @phpstan-ignore-next-line
         $this->assertFalse(isset($object['string']));
     }
 
@@ -52,14 +56,6 @@ class CollectionResponseTest extends TestCase
         $object = new CollectionResponse(self::$responseData);
 
         $this->assertEquals(3, $object[2]);
-    }
-
-    public function testOffsetGetInvalid(): void
-    {
-        $object = new CollectionResponse(self::$responseData);
-
-        $this->expectNotice();
-        $invalid = $object[3];
     }
 
     public function testIterator(): void

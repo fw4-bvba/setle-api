@@ -14,7 +14,7 @@ use Setle\Response\ResponseObject;
 
 abstract class ApiAdapter implements ApiAdapterInterface
 {
-    /** @var callable */
+    /** @var callable|null */
     protected $debugCallable;
 
     /**
@@ -22,9 +22,9 @@ abstract class ApiAdapter implements ApiAdapterInterface
      *
      * @param Request $request
      *
-     * @throws Exception\AuthException if access token is missing or invalid
-     * @throws Exception\NotFoundException if requested resource is unavailable
-     * @throws Exception\ApiException if a server-side error occurred
+     * @throws \Setle\Exception\AuthException if access token is missing or invalid
+     * @throws \Setle\Exception\NotFoundException if requested resource is unavailable
+     * @throws \Setle\Exception\ApiException if a server-side error occurred
      *
      * @return ResponseObject
      */
@@ -38,7 +38,6 @@ abstract class ApiAdapter implements ApiAdapterInterface
         }
 
         $response = json_decode($response_body, false);
-
         return new ResponseObject($response);
     }
 
@@ -46,13 +45,14 @@ abstract class ApiAdapter implements ApiAdapterInterface
      * Set a callback for debugging API requests and responses.
      *
      * @param callable|null $callable Callback that accepts up to three
-     * arguments - respectively the response body, request endpoint, and the
+     * arguments - respectively the response body, request endpoint and the
      * request body.
      *
-     * @return self
+     * @return Self
      */
-    public function debugResponses(?callable $callable): void
+    public function debugResponses(?callable $callable): self
     {
         $this->debugCallable = $callable;
+        return $this;
     }
 }

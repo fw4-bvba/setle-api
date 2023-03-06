@@ -10,13 +10,12 @@
 namespace Setle\Tests;
 
 use Setle\ApiAdapter\ApiAdapter;
-use Setle\ApiAdapter\ApiAdapterInterface;
 use Setle\Request\Request;
 use Exception;
 
 final class TestApiAdapter extends ApiAdapter
 {
-    /** @var array */
+    /** @var array<string|Exception> */
     protected $responseQueue = [];
 
     public function clearQueue(): void
@@ -36,13 +35,15 @@ final class TestApiAdapter extends ApiAdapter
 
     /**
      * {@inheritdoc}
-     */
-     public function requestBody(Request $request): string
+    */
+    public function requestBody(Request $request): string
     {
-		if (count($this->responseQueue) === 0) return null;
+        if (count($this->responseQueue) === 0) {
+            return '{}';
+        }
 
-		$response = $this->responseQueue[0];
-		array_shift($this->responseQueue);
+        $response = $this->responseQueue[0];
+        array_shift($this->responseQueue);
 
         if ($response instanceof Exception) {
             throw $response;
