@@ -9,6 +9,6 @@
 
 namespace Setle\Exception;
 
-class FailedJsonEncodingException extends \Exception implements \Throwable
+class FailedJsonEncodingException extends \Exception
 {
 }

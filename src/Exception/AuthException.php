@@ -9,6 +9,6 @@
 
 namespace Setle\Exception;
 
-class AuthException extends \Exception implements \Throwable
+class AuthException extends \Exception
 {
 }

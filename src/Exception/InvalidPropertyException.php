@@ -9,6 +9,6 @@
 
 namespace Setle\Exception;
 
-class InvalidPropertyException extends \Exception implements \Throwable
+class InvalidPropertyException extends \Exception
 {
 }

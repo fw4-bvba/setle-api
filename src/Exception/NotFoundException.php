@@ -9,6 +9,6 @@
 
 namespace Setle\Exception;
 
-class NotFoundException extends \Exception implements \Throwable
+class NotFoundException extends \Exception
 {
 }
