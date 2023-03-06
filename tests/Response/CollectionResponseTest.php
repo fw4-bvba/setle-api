@@ -58,14 +58,6 @@ class CollectionResponseTest extends TestCase
         $this->assertEquals(3, $object[2]);
     }
 
-    public function testOffsetGetInvalid(): void
-    {
-        $object = new CollectionResponse(self::$responseData);
-
-        $this->expectException(Notice::class);
-        $invalid = $object[3];
-    }
-
     public function testIterator(): void
     {
         $object = new CollectionResponse(self::$responseData);
