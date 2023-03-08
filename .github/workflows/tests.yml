@@ -30,6 +30,8 @@ jobs:
                     php-version: ${{ matrix.php }}
                     coverage: none
                     tools: composer:v1, phpunit:7.5
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             -   name: Install dependencies
                 run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-progress
@@ -63,6 +65,8 @@ jobs:
                     php-version: ${{ matrix.php }}
                     coverage: none
                     tools: phpunit:9.5
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             -   name: Install dependencies
                 run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-progress
